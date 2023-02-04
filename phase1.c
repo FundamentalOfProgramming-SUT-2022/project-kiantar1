@@ -19,7 +19,6 @@ void cat(char *input_name)
         printf("%c", c);
     }
     fclose(input_pt);
-    printf("\nDone!");
 }
 // ok
 void create_file(char *input_name, int m) // m : 1 = using to creat | 0 = using for undo
@@ -458,89 +457,20 @@ void undo(char *input_name)
     fclose(backupfile_pt);
 }
 // ok
-/*void read_command_name(char *input_name, char *text, int line_num, int char_num)
-{
-    char *input_name;
-    char *text;
-    int line_num;
-    int char_num;
-    char temp[100];
-    char command_name[100];
-    int i;
-    memset(command_name, 0, 100);
-    char c;
-    c = getchar();
-    for (i = 0; (c != ' ') && (c != '\n'); i++)
-    {
-        command_name[i] = c;
-        c = getchar();
-    }
-    if (strcmp("insertstr", command_name) == 0)
-    {
-        scanf("%s", &temp);
-        getchar();
-        c = getchar();
-        if (c != '\"')
-        {
-            input_name[0] = c;
-            sacnf("%s" , &(input_name + 1));
-        }
-        else{}
-        scanf("%s", &temp);
-        c = getchar();
-        if (c != '\"')
-        {
-            text[0] = c;
-            sacnf("%s" , &(text + 1));
-        }
-        else{}
-        scanf("%s", &temp);
-        scanf("%d:%d", &line_num, &char_num)
-        insertstr(line_num, char_num, input_name, text);
-    }
-    /*
-    if (strcmp("createfile", command_name) == 0)
-    {
-        create_file();
-    }
-
-    if (strcmp("removestr", command_name) == 0)
-    {
-        removestr();
-    }
-    if (strcmp("copystr", command_name) == 0)
-    {
-        copystr();
-    }
-    if (strcmp("cutstr", command_name) == 0)
-    {
-        cutstr();
-    }
-    if (strcmp("undo", command_name) == 0)
-    {
-        undo();
-    }
-    if (strcmp("compare", command_name) == 0)
-    {
-        compare();
-    }
-    if (strcmp("tree", command_name) == 0)
-    {
-        tree();
-    }
-
-}*/
-
 int main()
 {
     char input_name[1000];
+    char input_name1[1000];
+    char input_name2[1000];
     char text[1000];
-    int line_num;
-    int char_num;
+    int line_num, char_num, size, mode;
     char temp[100];
     char command_name[100];
     int i;
     memset(command_name, 0, 100);
+    memset(input_name, 0, 1000);
+    memset(input_name1, 0, 1000);
+    memset(input_name2, 0, 1000);
     char c;
     c = getchar();
     for (i = 0; (c != ' ') && (c != '\n'); i++)
@@ -548,6 +478,7 @@ int main()
         command_name[i] = c;
         c = getchar();
     }
+    // insertstr
     if (strcmp("insertstr", command_name) == 0)
     {
         scanf("%s", temp);
@@ -560,6 +491,7 @@ int main()
         }
         else
         {
+            c = getchar();
             for (i = 0; c != '\"'; i++)
             {
                 input_name[i] = c;
@@ -567,6 +499,8 @@ int main()
             }
         }
         scanf("%s", temp);
+        getchar();
+        c = getchar();
         if (c != '\"')
         {
             text[0] = c;
@@ -574,6 +508,7 @@ int main()
         }
         else
         {
+            c = getchar();
             for (i = 0; c != '\"'; i++)
             {
                 text[i] = c;
@@ -581,7 +516,251 @@ int main()
             }
         }
         scanf("%s", temp);
+        getchar();
         scanf("%d:%d", &line_num, &char_num);
         insertstr(line_num, char_num, input_name, text);
+    }
+
+    // cat
+    else if (strcmp("cat", command_name) == 0)
+    {
+        // cat –file file.txt
+        scanf("%s", temp);
+        getchar();
+        c = getchar();
+        if (c != '\"')
+        {
+            input_name[0] = c;
+            scanf("%s", (input_name + 1));
+        }
+        else
+        {
+            c = getchar();
+            for (i = 0; c != '\"'; i++)
+            {
+                input_name[i] = c;
+                c = getchar();
+            }
+        }
+        printf("%s", input_name);
+        cat(input_name);
+    }
+
+    // create file
+    else if (strcmp("createfile", command_name) == 0)
+    {
+        scanf("%s", temp);
+        getchar();
+        c = getchar();
+        if (c != '\"')
+        {
+            input_name[0] = c;
+            scanf("%s", (input_name + 1));
+        }
+        else
+        {
+            c = getchar();
+            for (i = 0; c != '\"'; i++)
+            {
+                input_name[i] = c;
+                c = getchar();
+            }
+        }
+        create_file(input_name, 1);
+    }
+
+    // copystr
+    else if (strcmp("copystr", command_name) == 0)
+    {
+        scanf("%s", temp);
+        getchar();
+        c = getchar();
+        if (c != '\"')
+        {
+            input_name[0] = c;
+            scanf("%s", (input_name + 1));
+        }
+        else
+        {
+            c = getchar();
+            for (i = 0; c != '\"'; i++)
+            {
+                input_name[i] = c;
+                c = getchar();
+            }
+        }
+        scanf("%s", temp);
+        getchar();
+        scanf("%d:%d", &line_num, &char_num);
+        scanf("%s", temp);
+        getchar();
+        scanf("%d", &size);
+        getchar();
+        getchar();
+        c = getchar();
+        if (c == 'f')
+            mode = 1;
+        else if (c == 'b')
+            mode = 0;
+        copystr(input_name, size, line_num, char_num, mode);
+    }
+
+    // removestr
+    else if (strcmp("removestr", command_name) == 0)
+    {
+        scanf("%s", temp);
+        getchar();
+        c = getchar();
+        if (c != '\"')
+        {
+            input_name[0] = c;
+            scanf("%s", (input_name + 1));
+        }
+        else
+        {
+            c = getchar();
+            for (i = 0; c != '\"'; i++)
+            {
+                input_name[i] = c;
+                c = getchar();
+            }
+        }
+        scanf("%s", temp);
+        getchar();
+        scanf("%d:%d", &line_num, &char_num);
+        scanf("%s", temp);
+        getchar();
+        scanf("%d", &size);
+        getchar();
+        getchar();
+        c = getchar();
+        if (c == 'f')
+            mode = 1;
+        else if (c == 'b')
+            mode = 0;
+        removestr(input_name, size, line_num, char_num, mode);
+    }
+
+    // cutstr
+    else if (strcmp("cutstr", command_name) == 0)
+    {
+        scanf("%s", temp);
+        getchar();
+        c = getchar();
+        if (c != '\"')
+        {
+            input_name[0] = c;
+            scanf("%s", (input_name + 1));
+        }
+        else
+        {
+            c = getchar();
+            for (i = 0; c != '\"'; i++)
+            {
+                input_name[i] = c;
+                c = getchar();
+            }
+        }
+        scanf("%s", temp);
+        getchar();
+        scanf("%d:%d", &line_num, &char_num);
+        scanf("%s", temp);
+        getchar();
+        scanf("%d", &size);
+        getchar();
+        getchar();
+        c = getchar();
+        if (c == 'f')
+            mode = 1;
+        else if (c == 'b')
+            mode = 0;
+        cutstr(input_name, size, line_num, char_num, mode);
+    }
+
+    // pastestr
+    else if (strcmp("pastestr", command_name) == 0)
+    {
+        scanf("%s", temp);
+        getchar();
+        c = getchar();
+        if (c != '\"')
+        {
+            input_name[0] = c;
+            scanf("%s", (input_name + 1));
+        }
+        else
+        {
+            c = getchar();
+            for (i = 0; c != '\"'; i++)
+            {
+                input_name[i] = c;
+                c = getchar();
+            }
+        }
+        scanf("%s", temp);
+        getchar();
+        scanf("%d:%d", &line_num, &char_num);
+        pastestr(input_name, line_num, char_num);
+    }
+
+    // undo
+    else if (strcmp("undo", command_name) == 0)
+    {
+        scanf("%s", temp);
+        getchar();
+        c = getchar();
+        if (c != '\"')
+        {
+            input_name[0] = c;
+            scanf("%s", (input_name + 1));
+        }
+        else
+        {
+            c = getchar();
+            for (i = 0; c != '\"'; i++)
+            {
+                input_name[i] = c;
+                c = getchar();
+            }
+        }
+        undo(input_name);
+    }
+
+    // compare
+    else if (strcmp("compare", command_name) == 0)
+    {
+        getchar();
+        c = getchar();
+        if (c != '\"')
+        {
+            input_name1[0] = c;
+            scanf("%s", (input_name1 + 1));
+        }
+        else
+        {
+            c = getchar();
+            for (i = 0; c != '\"'; i++)
+            {
+                input_name1[i] = c;
+                c = getchar();
+            }
+        }
+        getchar();
+        c = getchar();
+        if (c != '\"')
+        {
+            input_name2[0] = c;
+            scanf("%s", (input_name2 + 1));
+        }
+        else
+        {
+            c = getchar();
+            for (i = 0; c != '\"'; i++)
+            {
+                input_name2[i] = c;
+                c = getchar();
+            }
+        }
+        compare(input_name1, input_name2);
     }
 }
